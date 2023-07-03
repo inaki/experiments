@@ -23,13 +23,13 @@ const TicTacToeCell = ({ value }: TicTacToeCellProps) => {
   );
 };
 
-const boardInit = [
-  [null, null, null],
-  [null, null, null],
-  [null, null, null],
-];
-
 export default function TicTacToe() {
+  const boardInit = [
+    [null, null, null],
+    [null, null, null],
+    [null, null, null],
+  ];
+
   const [turn, setTurn] = useState<"X" | "O">("X"); // ["X", "O", "X", "O"
   const [isGameStarted, setIsGameStarted] = useState(false); // [true, false]
   const [isGameEnded, setIsGameEnded] = useState(false); // [true, false]
@@ -38,13 +38,21 @@ export default function TicTacToe() {
   const [board, setBoard] = useState<CellValue[][]>(boardInit);
 
   const handleClickTurn = (rIdx: number, cIdx: number) => {
+    if (!isGameStarted) {
+      return;
+    }
+
+    if (board[rIdx][cIdx]) {
+      return;
+    }
+
     setBoard((prev: CellValue[][]) => {
       const newBoard: CellValue[][] = [...prev];
       newBoard[rIdx][cIdx] = turn;
 
       if (checkWinner(newBoard)) {
-        console.log("winner");
         setIsGameEnded(true);
+        setIsGameStarted(false);
         setWinner(turn);
         setScore((prev) => {
           if (turn === "X") {
@@ -62,11 +70,17 @@ export default function TicTacToe() {
   };
 
   const handleStartGame = () => {
-    console.log("start");
+    setBoard(boardInit);
+    setIsGameStarted(true);
   };
 
   const handleResetGame = () => {
-    console.log("reset");
+    setBoard(boardInit);
+    setIsGameEnded(false);
+    setWinner(null);
+    setIsGameStarted(false);
+    setScore([0, 0]);
+    setTurn("X");
   };
 
   return (
@@ -81,7 +95,7 @@ export default function TicTacToe() {
               return (
                 <div
                   key={`${rowIndex}-${cellIndex}`}
-                  className={`bg-white ${cellBorder(rowIndex, cellIndex)}`}
+                  className={`${cellBorder(rowIndex, cellIndex)}`}
                   onClick={() => handleClickTurn(rowIndex, cellIndex)}
                 >
                   <TicTacToeCell value={cell} />
@@ -92,11 +106,30 @@ export default function TicTacToe() {
         </div>
 
         <div className="grid grid-rows-4 gap-2">
-          <div className="bg-gray-300 p-4">
+          <div className="p-4">
             <div>Score:</div>X : {score[0]} | O : {score[1]}
           </div>
-          <div className="bg-gray-300 p-4">turn: {turn}</div>
-          <div className="bg-gray-300 p-4">{isGameEnded ? "end" : "going"}</div>
+          <div className="p-4">
+            {isGameStarted && (
+              <>
+                Is <span className="underline">{turn}</span> turn!
+              </>
+            )}
+            {isGameEnded && !isGameStarted && (
+              <span>
+                {winner} player <span className="underline">won</span> this
+                play!
+              </span>
+            )}
+          </div>
+          <div className="p-4">
+            <br />
+            {!isGameStarted && (
+              <span>
+                Press <span className="font-bold">`start`</span> to play!
+              </span>
+            )}
+          </div>
           <div className="p-4 flex justify-around">
             <button
               className="border h-[50px] border-gray-400 rounded box-sizing inline-block px-4 py-2"

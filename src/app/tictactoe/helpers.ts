@@ -51,11 +51,11 @@ export const cellBorder = (rIdx: number, cIdx: number) => {
   } else if (rIdx === 2 && cIdx === 1) {
     return "border-t-2 border-r-2 border-gray-400";
   } else if (rIdx === 0 && cIdx === 2) {
-    return "border-b-2 border-gray-400";
+    return "border-b-2 border-r-2 border-gray-400";
   } else if (rIdx === 1 && cIdx === 2) {
-    return "border-gray-400";
+    return "border-r-2 border-gray-400";
   } else if (rIdx === 2 && cIdx === 2) {
-    return "border-t-2 border-gray-400";
+    return "border-t-2 border-r-2 border-gray-400";
   } else {
     return "";
   }
