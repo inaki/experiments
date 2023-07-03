@@ -68,7 +68,7 @@ export default function RootLayout({
             <FaBars />
           </button>
           <button
-            className="absolute top-10 right-5"
+            className="absolute top-5 right-5"
             onClick={() => setTheme(theme == "light" ? "dark" : "light")}
           >
             {theme === "light" ? <FiSun /> : <FiMoon />}

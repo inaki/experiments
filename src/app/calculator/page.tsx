@@ -75,16 +75,16 @@ export default function Calculator() {
       className={`flex min-h-screen items-center justify-center flex-col p-24
       ${inter.className}`}
     >
-      <div className="border w-[220px] rounded p-2 grid grid-cols-4 gap-4">
-        <div className="border rounded col-span-4 p-4 text-right text-2xl">
+      <div className="border w-[220px] border-gray-400 dark:border-light-secondary rounded p-2 grid grid-cols-4 gap-4">
+        <div className="border rounded border-gray-400 dark:border-light-secondary col-span-4 p-4 text-right text-2xl">
           {screen}
         </div>
         {calcKeys.map((calcBtn, idx) => (
           <button
             key={`${calcBtn}-${idx}`}
             onClick={() => handleButtonClick(calcBtn)}
-            className={`border border-gray-200 h-10 rounded-full focus:outline-none ${
-              calcBtn === "=" ? "bg-orange-400" : ""
+            className={`border border-gray-400 dark:border-light-secondary h-10 rounded-full focus:outline-none ${
+              calcBtn === "=" ? "bg-orange-400 border-none" : ""
             } ${calcBtn === 0 ? "col-span-2" : ""}`}
           >
             {calcBtn}
