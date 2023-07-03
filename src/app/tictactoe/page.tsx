@@ -106,10 +106,14 @@ export default function TicTacToe() {
         </div>
 
         <div className="grid grid-rows-4 gap-2">
-          <div className="p-4">
-            <div>Score:</div>X : {score[0]} | O : {score[1]}
+          <div className="p-4 pt-10">
+            <div className="flex justify-between">
+              <div>Score:</div>
+              <span>X : {score[0]}</span>
+              <span>O : {score[1]}</span>
+            </div>
           </div>
-          <div className="p-4">
+          <div className="p-4 pt-10">
             {isGameStarted && (
               <>
                 Is <span className="underline">{turn}</span> turn!
@@ -132,13 +136,13 @@ export default function TicTacToe() {
           </div>
           <div className="p-4 flex justify-around">
             <button
-              className="border h-[50px] border-gray-400 rounded box-sizing inline-block px-4 py-2"
+              className="border h-[50px] border-gray-400 rounded box-sizing inline-block px-4 py-2 hover:bg-gray-300"
               onClick={handleResetGame}
             >
               reset
             </button>
             <button
-              className="border h-[50px] border-gray-400 rounded box-sizing inline-block px-4 py-2"
+              className="border h-[50px] border-gray-400 rounded box-sizing inline-block px-4 py-2 hover:bg-gray-300"
               onClick={handleStartGame}
             >
               start
