@@ -1,62 +1,80 @@
 "use client";
 import { Inter } from "next/font/google";
 import { useState } from "react";
-import { TiTimes, TiMediaRecord } from "react-icons/ti";
+import { IoMdClose } from "react-icons/io";
+import { PiCircleLight } from "react-icons/pi";
+import { cellBorder, checkWinner } from "./helpers";
 
 const inter = Inter({
   subsets: ["latin"],
 });
 
+type CellValue = "X" | "O" | null;
 interface TicTacToeCellProps {
-  value: "X" | "O" | null;
+  value: CellValue;
 }
 
 const TicTacToeCell = ({ value }: TicTacToeCellProps) => {
   return (
-    <div className="absolute">
-      {value === "X" && <TiTimes size={32} />}
-      {value === "O" && <TiMediaRecord size={32} />}
+    <div className="absolute pt-8 pl-8 box-sizing">
+      {value === "X" && <IoMdClose size={60} />}
+      {value === "O" && <PiCircleLight size={60} />}
     </div>
   );
 };
 
-const cellBorder = (rIdx: number, cIdx: number) => {
-  if (rIdx === 0 && cIdx === 0) {
-    return "border-b-2 border-r-2 border-gray-400";
-  } else if (rIdx === 1 && cIdx === 0) {
-    return "border-r-2 border-l-1 border-gray-400";
-  } else if (rIdx === 2 && cIdx === 0) {
-    return "border-t-2 border-r-2 border-gray-400";
-  } else if (rIdx === 0 && cIdx === 1) {
-    return "border-b-2 border-r-2 border-gray-400";
-  } else if (rIdx === 1 && cIdx === 1) {
-    return "border-r-2 border-gray-400";
-  } else if (rIdx === 2 && cIdx === 1) {
-    return "border-t-2 border-r-2 border-gray-400";
-  } else if (rIdx === 0 && cIdx === 2) {
-    return "border-b-2 border-gray-400";
-  } else if (rIdx === 1 && cIdx === 2) {
-    return "border-gray-400";
-  } else if (rIdx === 2 && cIdx === 2) {
-    return "border-t-2 border-gray-400";
-  } else {
-    return "";
-  }
-};
+const boardInit = [
+  [null, null, null],
+  [null, null, null],
+  [null, null, null],
+];
 
 export default function TicTacToe() {
-  const [board, setBoard] = useState([
-    [null, null, null],
-    [null, null, null],
-    [null, null, null],
-  ]);
+  const [turn, setTurn] = useState<"X" | "O">("X"); // ["X", "O", "X", "O"
+  const [isGameStarted, setIsGameStarted] = useState(false); // [true, false]
+  const [isGameEnded, setIsGameEnded] = useState(false); // [true, false]
+  const [winner, setWinner] = useState<"X" | "O" | null>(null); // ["X", "O", null
+  const [score, setScore] = useState<[number, number]>([0, 0]); // [0, 1]
+  const [board, setBoard] = useState<CellValue[][]>(boardInit);
+
+  const handleClickTurn = (rIdx: number, cIdx: number) => {
+    setBoard((prev: CellValue[][]) => {
+      const newBoard: CellValue[][] = [...prev];
+      newBoard[rIdx][cIdx] = turn;
+
+      if (checkWinner(newBoard)) {
+        console.log("winner");
+        setIsGameEnded(true);
+        setWinner(turn);
+        setScore((prev) => {
+          if (turn === "X") {
+            return [prev[0] + 1, prev[1]];
+          } else {
+            return [prev[0], prev[1] + 1];
+          }
+        });
+      }
+
+      return newBoard;
+    });
+
+    setTurn((prev) => (prev === "X" ? "O" : "X"));
+  };
+
+  const handleStartGame = () => {
+    console.log("start");
+  };
+
+  const handleResetGame = () => {
+    console.log("reset");
+  };
 
   return (
     <main
       className={`flex min-h-screen items-center justify-center flex-col p-24
   ${inter.className}`}
     >
-      <div className="grid grid-cols-[60%,35%] border w-[600px] h-[360px] overflow-hidden border-gray-400 dark:border-light-secondary rounded">
+      <div className="grid grid-cols-[60%,40%] border w-[600px] h-[400px] overflow-hidden border-gray-400 dark:border-light-secondary rounded">
         <div className="grid grid-cols-3 gap-0">
           {board.map((row, rowIndex) => {
             return row.map((cell, cellIndex) => {
@@ -64,6 +82,7 @@ export default function TicTacToe() {
                 <div
                   key={`${rowIndex}-${cellIndex}`}
                   className={`bg-white ${cellBorder(rowIndex, cellIndex)}`}
+                  onClick={() => handleClickTurn(rowIndex, cellIndex)}
                 >
                   <TicTacToeCell value={cell} />
                 </div>
@@ -72,13 +91,26 @@ export default function TicTacToe() {
           })}
         </div>
 
-        <div className="grid grid-rows-6 gap-2">
-          <div className="bg-green-300 p-4">Row 1 in Column 2</div>
-          <div className="bg-green-300 p-4">Row 2 in Column 2</div>
-          <div className="bg-green-300 p-4">Row 3 in Column 2</div>
-          <div className="bg-green-300 p-4">Row 4 in Column 2</div>
-          <div className="bg-green-300 p-4">Row 5 in Column 2</div>
-          <div className="bg-green-300 p-4">Row 6 in Column 2</div>
+        <div className="grid grid-rows-4 gap-2">
+          <div className="bg-gray-300 p-4">
+            <div>Score:</div>X : {score[0]} | O : {score[1]}
+          </div>
+          <div className="bg-gray-300 p-4">turn: {turn}</div>
+          <div className="bg-gray-300 p-4">{isGameEnded ? "end" : "going"}</div>
+          <div className="p-4 flex justify-around">
+            <button
+              className="border h-[50px] border-gray-400 rounded box-sizing inline-block px-4 py-2"
+              onClick={handleResetGame}
+            >
+              reset
+            </button>
+            <button
+              className="border h-[50px] border-gray-400 rounded box-sizing inline-block px-4 py-2"
+              onClick={handleStartGame}
+            >
+              start
+            </button>
+          </div>
         </div>
       </div>
     </main>
