@@ -61,7 +61,10 @@ export default function TicTacToe() {
           {board.map((row, rowIndex) => {
             return row.map((cell, cellIndex) => {
               return (
-                <div className={`bg-white ${cellBorder(rowIndex, cellIndex)}`}>
+                <div
+                  key={`${rowIndex}-${cellIndex}`}
+                  className={`bg-white ${cellBorder(rowIndex, cellIndex)}`}
+                >
                   <TicTacToeCell value={cell} />
                 </div>
               );

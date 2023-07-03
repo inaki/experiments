@@ -95,7 +95,7 @@ export default function Calculator() {
   );
 }
 
-export const calcKeys = [
+const calcKeys = [
   "AC",
   "+/-",
   "%",
