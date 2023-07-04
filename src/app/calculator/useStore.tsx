@@ -1,49 +1,59 @@
 import { useState } from "react";
-import { operate } from "./helpers";
+import { operate, trimLeadingZeros } from "./helpers";
 
 export function useCalculator() {
   const [screen, setScreen] = useState("0");
   const [fNum, setFNum] = useState(0);
-  const [operator, setOperator] = useState<null | string>(null);
-  const [sNum, setSNum] = useState(0);
+  const [operator, setOperator] = useState<string | null>(null);
+  const [sNum, setSNum] = useState<number | null>(0);
+
+  const updateStates = (
+    sc: string,
+    num: number,
+    op: string | null,
+    sec: number | null
+  ) => {
+    setScreen(sc);
+    setFNum(num);
+    setOperator(op);
+    setSNum(sec);
+  };
 
   const setCalcButton = (btn: string | number) => {
-    if (typeof btn === "number") {
-      if (!operator) {
-        setFNum(Number(`${fNum}${btn}`));
-        setScreen(`${fNum}${btn}`);
+    if (btn === "AC") {
+      updateStates("0", 0, null, null);
+    } else if (typeof btn === "number" || btn === ".") {
+      console.log("is number or dot");
+      if (operator !== null) {
+        let newSecondNum = `${sNum ?? ""}${btn}`;
+        if (btn === "." && !newSecondNum.includes(".")) {
+          newSecondNum += ".";
+        }
+        newSecondNum = String(trimLeadingZeros(+newSecondNum));
+        setSNum(parseFloat(newSecondNum));
+        setScreen(newSecondNum);
       } else {
-        setSNum(Number(`${sNum}${btn}`));
-        setScreen(`${sNum}${btn}`);
+        let newNum = `${fNum ?? ""}${btn}`;
+        if (btn === "." && !newNum.includes(".")) {
+          console.log("is flaot");
+          newNum += ".";
+        }
+        newNum = String(trimLeadingZeros(+newNum));
+        setFNum(parseFloat(newNum));
+        setScreen(newNum);
+      }
+    } else if (btn === "=") {
+      if (operator && fNum !== null && sNum !== null) {
+        let result = operate(operator, fNum, sNum);
+        console.log(result);
+        updateStates(result.toString(), result, null, null);
       }
     } else {
-      if (btn === "AC") {
-        setFNum(0);
-        setSNum(0);
-        setOperator(null);
-        setScreen("0");
-      } else if (btn === "%") {
-        if (sNum) {
-          setSNum(sNum / 100);
-          setScreen((sNum / 100).toString());
-        } else {
-          setFNum(fNum / 100);
-          setScreen((fNum / 100).toString());
-        }
-      } else if (btn === "+/-") {
-        if (sNum) {
-          setSNum(sNum * -1);
-          setScreen((sNum * -1).toString());
-        } else {
-          setFNum(fNum * -1);
-          setScreen((fNum * -1).toString());
-        }
-      } else {
-        if (sNum) {
-          setFNum(operate(operator!, fNum, sNum));
-          setSNum(0);
-          setScreen(operate(operator!, fNum, sNum).toString());
-        }
+      if (operator && fNum !== null && sNum !== null) {
+        let result = operate(operator, fNum, sNum);
+        console.log(result);
+        updateStates(result.toString(), result, btn, null);
+      } else if (fNum !== null) {
         setOperator(btn);
       }
     }
