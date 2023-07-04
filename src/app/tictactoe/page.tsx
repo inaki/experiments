@@ -70,6 +70,7 @@ export default function TicTacToe() {
   };
 
   const handleStartGame = () => {
+    console.log("start game");
     setBoard(boardInit);
     setIsGameStarted(true);
   };
