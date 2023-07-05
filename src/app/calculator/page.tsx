@@ -1,75 +1,15 @@
 "use client";
 import { Inter } from "next/font/google";
-import { useState } from "react";
+import { useCalculator } from "./useStore";
+import { calcKeys } from "./helpers";
 
 const inter = Inter({
   subsets: ["latin"],
 });
 
-function operate(operator: string, a: number, b: number) {
-  if (operator === "+") {
-    return a + b;
-  } else if (operator === "-") {
-    return a - b;
-  } else if (operator === "*") {
-    return a * b;
-  } else if (operator === "/") {
-    return a / b;
-  } else {
-    return 0;
-  }
-}
-
 export default function Calculator() {
-  const [screen, setScreen] = useState("0");
-  const [fNum, setFNum] = useState(0);
-  const [operator, setOperator] = useState<null | string>(null);
-  const [sNum, setSNum] = useState(0);
+  const { screen, setCalcButton } = useCalculator();
 
-  const handleButtonClick = (btn: string | number) => {
-    if (typeof btn === "number") {
-      if (!operator) {
-        setFNum(Number(`${fNum}${btn}`));
-        setScreen(`${fNum}${btn}`);
-        console.log("fNum", Number(`${fNum}${btn}`));
-      } else {
-        setSNum(Number(`${sNum}${btn}`));
-        setScreen(`${sNum}${btn}`);
-        console.log("sNum", sNum);
-      }
-    } else {
-      if (btn === "AC") {
-        setFNum(0);
-        setSNum(0);
-        setOperator(null);
-        setScreen("0");
-      } else if (btn === "%") {
-        if (sNum) {
-          setSNum(sNum / 100);
-          setScreen((sNum / 100).toString());
-        } else {
-          setFNum(fNum / 100);
-          setScreen((fNum / 100).toString());
-        }
-      } else if (btn === "+/-") {
-        if (sNum) {
-          setSNum(sNum * -1);
-          setScreen((sNum * -1).toString());
-        } else {
-          setFNum(fNum * -1);
-          setScreen((fNum * -1).toString());
-        }
-      } else {
-        if (sNum) {
-          setFNum(operate(operator!, fNum, sNum));
-          setSNum(0);
-          setScreen(operate(operator!, fNum, sNum).toString());
-        }
-        console.log("operator", btn);
-        setOperator(btn);
-      }
-    }
-  };
   return (
     <main
       className={`flex min-h-screen items-center justify-center flex-col p-24
@@ -82,7 +22,7 @@ export default function Calculator() {
         {calcKeys.map((calcBtn, idx) => (
           <button
             key={`${calcBtn}-${idx}`}
-            onClick={() => handleButtonClick(calcBtn)}
+            onClick={() => setCalcButton(calcBtn)}
             className={`border border-gray-400 dark:border-light-secondary h-10 rounded-full focus:outline-none ${
               calcBtn === "=" ? "bg-orange-400 border-none" : ""
             } ${calcBtn === 0 ? "col-span-2" : ""}`}
@@ -94,25 +34,3 @@ export default function Calculator() {
     </main>
   );
 }
-
-const calcKeys = [
-  "AC",
-  "+/-",
-  "%",
-  "/",
-  7,
-  8,
-  9,
-  "*",
-  4,
-  5,
-  6,
-  "-",
-  1,
-  2,
-  3,
-  "+",
-  0,
-  ".",
-  "=",
-];
